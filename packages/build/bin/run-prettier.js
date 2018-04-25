@@ -20,6 +20,8 @@ function run(argv, options) {
 
   const prettierOpts = argv.slice(2);
 
+  console.log(prettierOpts);
+
   const isConfigSet = utils.isOptionSet(
     prettierOpts,
     '--find-config-path',

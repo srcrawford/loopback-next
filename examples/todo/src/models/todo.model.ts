@@ -4,31 +4,11 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {Entity, property, model} from '@loopback/repository';
+import {TodoModelIface} from './todo.model.iface';
+const modelDef = require('./todo.model.json');
 
-@model()
-export class Todo extends Entity {
-  @property({
-    type: 'number',
-    id: true,
-  })
-  id?: number;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  title: string;
-
-  @property({
-    type: 'string',
-  })
-  desc?: string;
-
-  @property({
-    type: 'boolean',
-  })
-  isComplete: boolean;
-
+@model(modelDef)
+export class Todo extends TodoModelIface {
   getId() {
     return this.id;
   }
