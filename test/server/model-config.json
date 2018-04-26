@@ -41,5 +41,9 @@
   "Note": {
     "dataSource": "db",
     "public": true
+  },
+  "Random": {
+    "dataSource": "db",
+    "public": true
   }
 }

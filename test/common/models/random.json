@@ -1,31 +1,30 @@
 {
-  "name": "Note",
+  "name": "Random",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "id": {
-      "type": "number",
-      "required": true
-    },
-    "title": {
+    "name": {
       "type": "string",
       "required": true
     },
-    "desc": {
-      "type": "string"
-    },
-    "isComplete": {
-      "type": "boolean"
+    "obj": {
+      "type": "object"
     },
     "test": {
-      "type": "date",
+      "type": "any",
       "required": true
     },
-    "buf": {
-      "type": "buffer"
+    "eee": {
+      "type": "User",
+      "required": true
+    },
+    "def": {
+      "type": "string",
+      "required": true,
+      "default": "'hello'"
     }
   },
   "validations": [],
