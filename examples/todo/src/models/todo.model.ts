@@ -3,12 +3,13 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {Entity, property, model} from '@loopback/repository';
-import {TodoModelIface} from './todo.model.iface';
+import {model} from '@loopback/repository';
+// import {TodoModelIface} from './todo.model.iface';
+import {TodoBase} from './_base';
 const modelDef = require('./todo.model.json');
 
 @model(modelDef)
-export class Todo extends TodoModelIface {
+export class Todo extends TodoBase {
   getId() {
     return this.id;
   }
