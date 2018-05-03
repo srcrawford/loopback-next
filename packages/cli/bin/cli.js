@@ -38,6 +38,10 @@ env.register(
   'loopback4:controller'
 );
 env.register(
+  path.join(__dirname, '../generators/datasource'),
+  'loopback4:datasource'
+);
+env.register(
   path.join(__dirname, '../generators/example'),
   'loopback4:example'
 );

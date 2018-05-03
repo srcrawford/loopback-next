@@ -1,0 +1,57 @@
+{
+  "name": "test4",
+  "version": "1.0.0",
+  "description": "test4",
+  "keywords": [
+    "loopback-application",
+    "loopback"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=8"
+  },
+  "scripts": {
+    "build": "lb-tsc es2017",
+    "build:watch": "lb-tsc es2017 --watch",
+    "clean": "lb-clean",
+    "lint": "npm run prettier:check && npm run tslint",
+    "lint:fix": "npm run prettier:fix && npm run tslint:fix",
+    "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\"",
+    "prettier:check": "npm run prettier:cli -- -l",
+    "prettier:fix": "npm run prettier:cli -- --write",
+    "tslint": "lb-tslint",
+    "tslint:fix": "npm run tslint -- --fix",
+    "pretest": "npm run clean && npm run build",
+    "test": "lb-mocha --allow-console-logs \"DIST/test\"",
+    "posttest": "npm run lint",
+    "start": "npm run build && node .",
+    "prepublishOnly": "npm run test"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "author": "",
+  "license": "",
+  "files": [
+    "README.md",
+    "index.js",
+    "index.d.ts",
+    "dist",
+    "src"
+  ],
+  "dependencies": {
+    "@loopback/context": "^0.8.0",
+    "@loopback/boot": "^0.8.0",
+    "@loopback/core": "^0.6.0",
+    "@loopback/rest": "^0.7.0",
+    "@loopback/openapi-v3": "^0.7.0"
+  },
+  "devDependencies": {
+    "@loopback/build": "^0.5.0",
+    "@types/node": "^8.10.4",
+    "@loopback/testlab": "^0.7.0",
+    "@types/mocha": "^5.0.0",
+    "mocha": "^5.0.5",
+    "source-map-support": "^0.5.4"
+  }
+}

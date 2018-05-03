@@ -2,5 +2,11 @@
   "db": {
     "name": "db",
     "connector": "memory"
+  },
+  "name": {
+    "name": "name",
+    "localStorage": "",
+    "file": "",
+    "connector": "memory"
   }
 }

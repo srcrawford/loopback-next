@@ -17,6 +17,7 @@ const promisify = require('util').promisify;
 const camelCase = require('change-case').camelCase;
 const validate = require('validate-npm-package-name');
 const Conflicter = require('yeoman-generator/lib/util/conflicter');
+const glob = require('glob');
 
 const readdirAsync = promisify(fs.readdir);
 
@@ -183,6 +184,35 @@ exports.getArtifactList = function(dir, artifactType, addSuffix, reader) {
         : exports.toClassName(result);
     });
   });
+};
+
+
+
+exports.getArtifactsFromJSON = function(dir, artifactType, properties) {
+  globPattern = `${dir}/**/*${artifactType}.json`;
+
+  if (properties instanceof String) {
+    properties = [properties];
+  }
+
+  return Promise.resolve(
+    glob(globPattern).then(files => {
+      data = [];
+      files.forEach(file => {
+        file = require(file);
+        if (properties) {
+          filteredProps = {};
+          properties.forEach(prop => {
+            filteredProps[prop] = file[prop];
+          });
+          data.push(filteredProps);
+        } else {
+          data.push(file);
+        }
+      });
+      return data;
+    })
+  );
 };
 
 /**
