@@ -179,6 +179,8 @@ export declare namespace juggler {
       properties?: AnyObject,
       options?: Options,
     ): T;
+
+    modelBuilder: ModelBuilder;
   }
 
   /**
