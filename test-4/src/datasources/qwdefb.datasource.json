@@ -1,0 +1,11 @@
+{
+  "name": "qwdefb",
+  "connector": "db2",
+  "dsn": "",
+  "host": "",
+  "port": 0,
+  "user": "",
+  "password": "sad",
+  "database": "",
+  "schema": ""
+}

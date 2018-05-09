@@ -1,0 +1,10 @@
+{
+  "name": "qa",
+  "connector": "dashdb",
+  "dsn": "qwd",
+  "host": "",
+  "port": null,
+  "user": "sf",
+  "password": "sdf",
+  "database": "sdf"
+}

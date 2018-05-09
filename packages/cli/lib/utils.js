@@ -186,8 +186,6 @@ exports.getArtifactList = function(dir, artifactType, addSuffix, reader) {
   });
 };
 
-
-
 exports.getArtifactsFromJSON = function(dir, artifactType, properties) {
   globPattern = `${dir}/**/*${artifactType}.json`;
 
@@ -237,4 +235,31 @@ exports.getDependencies = function() {
     deps[i] = dependencies[i] || loopbackVersion;
   }
   return deps;
+};
+
+/**
+ * Validate object / array type prompts
+ */
+exports.validateStringObject = function(type) {
+  return function validate(val) {
+    const err = `The value must be stringified ${type}`;
+
+    if (val == null || val === '') {
+      return true;
+    }
+    if (typeof val !== 'string') {
+      return err;
+    }
+
+    try {
+      const result = JSON.parse(val);
+      if (type === 'array' && !Array.isArray(result)) {
+        return err;
+      }
+    } catch (e) {
+      return err;
+    }
+
+    return true;
+  };
 };

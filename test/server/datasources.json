@@ -8,5 +8,33 @@
     "localStorage": "",
     "file": "",
     "connector": "memory"
+  },
+  "ds": {
+    "host": "",
+    "port": 0,
+    "database": "",
+    "password": "",
+    "name": "ds",
+    "dsn": "",
+    "user": "",
+    "schema": "",
+    "connector": "db2"
+  },
+  "adasd": {
+    "name": "adasd",
+    "localStorage": "",
+    "file": "",
+    "connector": "memory"
+  },
+  "esdf": {
+    "host": "sdf",
+    "port": 132,
+    "database": "sdf",
+    "password": "sdf",
+    "name": "esdf",
+    "dsn": "sdfs",
+    "user": "sdf",
+    "schema": "",
+    "connector": "db2"
   }
 }

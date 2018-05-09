@@ -1,0 +1,26 @@
+{
+  "name": "ds",
+  "connector": "memory",
+  "localStorage": "",
+  "file": "",
+  "connectorInfo": {
+    "name": "memory",
+    "description": "In-memory db",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings": {
+      "localStorage": {
+        "type": "string",
+        "message": "window.localStorage key to use for persistence (browser only)"
+      },
+      "file": {
+        "type": "string",
+        "message": "Full path to file for persistence (server only)"
+      }
+    },
+    "supportedByStrongLoop": true
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "db",
+  "name": "adsasdasd",
   "connector": "memory",
   "localStorage": "",
-  "file": "./data.db.json"
+  "file": ""
 }

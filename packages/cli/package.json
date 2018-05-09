@@ -47,6 +47,8 @@
     "gunzip-maybe": "^1.4.1",
     "lodash": "^4.17.5",
     "minimist": "^1.2.0",
+    "prettier": "^1.12.1",
+    "rc": "^1.2.7",
     "regenerate": "^1.3.3",
     "request": "^2.85.0",
     "semver": "^5.5.0",
