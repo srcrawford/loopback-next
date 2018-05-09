@@ -128,6 +128,16 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
             validate: utils.validateClassName,
           },
           {
+            type: 'input',
+            name: 'modelNamePlural',
+            message:
+              'What is the custom plural form of the model (for building REST URL)',
+            when: this.artifactInfo.modelName === undefined,
+            default: response =>
+              utils.kebabCase(utils.pluralize(response.modelName)),
+            validate: utils.validateUrlSlug,
+          },
+          {
             type: 'list',
             name: 'repositoryName',
             message: 'What is the name of your CRUD repository?',
@@ -159,8 +169,8 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
           this.artifactInfo.repositoryNameCamel = utils.camelCase(
             this.artifactInfo.repositoryName,
           );
-          this.artifactInfo.modelNameCamel = utils.camelCase(
-            this.artifactInfo.modelName,
+          this.artifactInfo.modelNamePluralKebab = utils.kebabCase(
+            this.artifactInfo.modelNamePlural,
           );
           return props;
         });

@@ -12,6 +12,7 @@ const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 const fs = require('fs');
 const util = require('util');
+const utils = require('../../../lib/utils');
 const testUtils = require('../../test-utils');
 
 const ControllerGenerator = require('../../../generators/controller');
@@ -117,20 +118,60 @@ describe('lb4 controller', () => {
           ),
           dir => {
             tmpDir = dir;
-            testUtils.givenAnApplicationDir(tmpDir);
-            fs.writeFileSync(
-              testUtils.givenAModelPath(tmpDir, 'foo.model.ts'),
-              '--DUMMY VALUE--',
-            );
-            fs.writeFileSync(
-              testUtils.givenARepositoryPath(tmpDir, 'bar.repository.ts'),
-              '--DUMMY VALUE--',
-            );
+            givenModelAndRepository(tmpDir);
           },
         )
         .then(() => {
           return checkRestCrudContents(tmpDir);
         });
+    });
+    describe('modelNamePlural', () => {
+      it('is inferred to be plural form of model name', () => {
+        let tmpDir;
+        return testUtils
+          .runGeneratorWith(
+            generator,
+            Object.assign(
+              {
+                modelName: 'Foo',
+                repositoryName: 'BarRepository',
+                id: 'number',
+              },
+              baseInput,
+            ),
+            dir => {
+              tmpDir = dir;
+              givenModelAndRepository(tmpDir);
+            },
+          )
+          .then(() => {
+            checkRestPaths(tmpDir, 'foos');
+          });
+      });
+      it('uses given modelNamePlural for building paths', () => {
+        let tmpDir;
+        const urlSlug = 'custom';
+        return testUtils
+          .runGeneratorWith(
+            generator,
+            Object.assign(
+              {
+                modelName: 'Foo',
+                modelNamePlural: urlSlug,
+                repositoryName: 'BarRepository',
+                id: 'number',
+              },
+              baseInput,
+            ),
+            dir => {
+              tmpDir = dir;
+              givenModelAndRepository(tmpDir);
+            },
+          )
+          .then(() => {
+            checkRestPaths(tmpDir, urlSlug);
+          });
+      });
     });
 
     it('fails when no model is given', () => {
@@ -161,6 +202,22 @@ describe('lb4 controller', () => {
       });
     });
   });
+
+  /**
+   * Helper function for setting model and repository input
+   * @param {string} tmpDir The temporary directory to set up model & repository
+   */
+  function givenModelAndRepository(tmpDir) {
+    testUtils.givenAnApplicationDir(tmpDir);
+    fs.writeFileSync(
+      testUtils.givenAModelPath(tmpDir, 'foo.model.ts'),
+      '--DUMMY VALUE--',
+    );
+    fs.writeFileSync(
+      testUtils.givenARepositoryPath(tmpDir, 'bar.repository.ts'),
+      '--DUMMY VALUE--',
+    );
+  }
 
   /**
    * Helper function for testing behaviour without model input.
@@ -290,37 +347,73 @@ describe('lb4 controller', () => {
     // Assert that the decorators are present in the correct groupings!
     assert.fileContent(
       tmpDir + withInputName,
-      /\@post\('\/foo'\)\s{1,}async create\(\@requestBody\(\)/,
+      /\@post\('\/foos'\)\s{1,}async create\(\@requestBody\(\)/,
     );
 
     assert.fileContent(
       tmpDir + withInputName,
-      /\@get\('\/foo\/count'\)\s{1,}async count\(\@param.query.string\('where'\)/,
+      /\@get\('\/foos\/count'\)\s{1,}async count\(\@param.query.string\('where'\)/,
     );
 
     assert.fileContent(
       tmpDir + withInputName,
-      /\@get\('\/foo'\)\s{1,}async find\(\@param.query.string\('filter'\)/,
+      /\@get\('\/foos'\)\s{1,}async find\(\@param.query.string\('filter'\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@patch\('\/foo'\)\s{1,}async updateAll\(\@param.query.string\('where'\) where: Where,\s{1,}\@requestBody\(\)/,
+      /\@patch\('\/foos'\)\s{1,}async updateAll\(\@param.query.string\('where'\) where: Where,\s{1,}\@requestBody\(\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@del\('\/foo'\)\s{1,}async deleteAll\(\@param.query.string\('where'\)/,
+      /\@del\('\/foos'\)\s{1,}async deleteAll\(\@param.query.string\('where'\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@get\('\/foo\/{id}'\)\s{1,}async findById\(\@param.path.number\('id'\)/,
+      /\@get\('\/foos\/{id}'\)\s{1,}async findById\(\@param.path.number\('id'\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@patch\('\/foo\/{id}'\)\s{1,}async updateById\(\@param.path.number\('id'\) id: number, \@requestBody\(\)/,
+      /\@patch\('\/foos\/{id}'\)\s{1,}async updateById\(\@param.path.number\('id'\) id: number, \@requestBody\(\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@del\('\/foo\/{id}'\)\s{1,}async deleteById\(\@param.path.number\('id'\) id: number\)/,
+      /\@del\('\/foos\/{id}'\)\s{1,}async deleteById\(\@param.path.number\('id'\) id: number\)/,
+    );
+  }
+
+  function checkRestPaths(tmpDir, restUrl) {
+    restUrl = utils.kebabCase(restUrl);
+    assert.fileContent(
+      tmpDir + withInputName,
+      new RegExp(/@post\('\//.source + restUrl + /'\)/.source),
+    );
+    assert.fileContent(
+      tmpDir + withInputName,
+      new RegExp(/@get\('\//.source + restUrl + /\/count'\)/.source),
+    );
+    assert.fileContent(
+      tmpDir + withInputName,
+      new RegExp(/@get\('\//.source + restUrl + /'\)/.source),
+    );
+    assert.fileContent(
+      tmpDir + withInputName,
+      new RegExp(/@patch\('\//.source + restUrl + /'\)/.source),
+    );
+    assert.fileContent(
+      tmpDir + withInputName,
+      new RegExp(/@del\('\//.source + restUrl + /'\)/.source),
+    );
+    assert.fileContent(
+      tmpDir + withInputName,
+      new RegExp(/@get\('\//.source + restUrl + /\/{id}'\)/.source),
+    );
+    assert.fileContent(
+      tmpDir + withInputName,
+      new RegExp(/@patch\('\//.source + restUrl + /\/{id}'\)/.source),
+    );
+    assert.fileContent(
+      tmpDir + withInputName,
+      new RegExp(/@del\('\//.source + restUrl + /\/{id}'\)/.source),
     );
   }
 });
