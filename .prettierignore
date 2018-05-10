@@ -3,5 +3,6 @@ packages/*/api-docs
 packages/cli/generators/*/templates
 packages/*/dist*
 examples/*/dist*
+sandbox/**/dist*
 *.json
 *.md
