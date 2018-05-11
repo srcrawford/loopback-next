@@ -137,7 +137,7 @@ export class TodoController {
     return await this.todoRepo.findById(id);
   }
 
-  @get('/todo')
+  @get('/todos')
   async findTodos(): Promise<Todo[]> {
     return await this.todoRepo.find();
   }
