@@ -28,7 +28,7 @@ describe('Routing metadata for parameters', () => {
     it('defines a parameter with in:query type:number', () => {
       class MyController {
         @get('/greet')
-        greet(@param.query.number('name') name: string) {}
+        greet(@param.query.number('name') name: number) {}
       }
       const expectedParamSpec = {
         name: 'name',

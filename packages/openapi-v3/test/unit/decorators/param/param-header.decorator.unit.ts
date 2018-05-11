@@ -45,7 +45,7 @@ describe('Routing metadata for parameters', () => {
     it('defines a parameter with in:header type:integer', () => {
       class MyController {
         @get('/greet')
-        greet(@param.header.integer('name') name: string) {}
+        greet(@param.header.integer('name') name: number) {}
       }
       const expectedParamSpec = {
         name: 'name',
