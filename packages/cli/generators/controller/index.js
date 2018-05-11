@@ -128,16 +128,6 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
             validate: utils.validateClassName,
           },
           {
-            type: 'input',
-            name: 'modelNamePlural',
-            message:
-              'What is the custom plural form of the model (for building REST URL)',
-            when: this.artifactInfo.modelName === undefined,
-            default: response =>
-              utils.kebabCase(utils.pluralize(response.modelName)),
-            validate: utils.validateUrlSlug,
-          },
-          {
             type: 'list',
             name: 'repositoryName',
             message: 'What is the name of your CRUD repository?',
@@ -154,6 +144,37 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
             when: this.artifactInfo.idType === undefined,
             default: 'number',
           },
+          {
+            type: 'list',
+            name: 'httpPathNameChoices',
+            message:
+              'Select the HTTP path naming convention of this CRUD repository',
+            choices: utils.getUrlPathChoices,
+            when: this.artifactInfo.httpPathName === undefined,
+            default: 'default',
+          },
+          {
+            type: 'input',
+            name: 'httpPathSingular',
+            message:
+              'What is the singular base HTTP path of this CRUD repository?',
+            when: answers => answers.httpPathNameChoices === 'custom',
+            default: answers =>
+              utils.appendBackslash(utils.urlSlug(answers.modelName)),
+            validate: utils.validateUrlSlug,
+            filter: utils.appendBackslash,
+          },
+          {
+            type: 'input',
+            name: 'httpPathPlural',
+            message:
+              'What is the plural base HTTP path of this CRUD repository?',
+            when: answers => answers.httpPathNameChoices === 'custom',
+            default: answers =>
+              utils.appendBackslash(utils.pluralize(answers.httpPathSingular)),
+            validate: utils.validateUrlSlug,
+            filter: utils.appendBackslash,
+          },
         ]).then(props => {
           debug(`props: ${inspect(props)}`);
           Object.assign(this.artifactInfo, props);
@@ -169,9 +190,15 @@ module.exports = class ControllerGenerator extends ArtifactGenerator {
           this.artifactInfo.repositoryNameCamel = utils.camelCase(
             this.artifactInfo.repositoryName,
           );
-          this.artifactInfo.modelNamePluralKebab = utils.kebabCase(
-            this.artifactInfo.modelNamePlural,
-          );
+          // Assign default http path values if not customized
+          this.artifactInfo.httpPathSingular =
+            this.artifactInfo.httpPathSingular ||
+            utils.appendBackslash(utils.urlSlug(this.artifactInfo.modelName));
+          this.artifactInfo.httpPathPlural =
+            this.artifactInfo.httpPathPlural ||
+            utils.appendBackslash(
+              utils.pluralize(this.artifactInfo.httpPathSingular),
+            );
           return props;
         });
       })

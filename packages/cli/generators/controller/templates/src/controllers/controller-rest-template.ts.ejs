@@ -12,53 +12,56 @@ import {<%= modelName %>} from '../models';
 import {<%= repositoryName %>} from '../repositories';
 
 export class <%= name %>Controller {
-
   constructor(
     @repository(<%= repositoryName %>)
     public <%= repositoryNameCamel %> : <%= repositoryName %>,
   ) {}
 
-  @post('/<%= modelNamePluralKebab %>')
+  @post('<%= httpPathSingular %>')
   async create(@requestBody() obj: <%= modelName %>)
     : Promise<<%= modelName %>> {
     return await this.<%= repositoryNameCamel %>.create(obj);
   }
 
-  @get('/<%= modelNamePluralKebab %>/count')
-  async count(@param.query.string('where') where: Where) : Promise<number> {
+  @get('<%= httpPathPlural %>/count')
+  async count(@param.query.string('where') where: Where): Promise<number> {
     return await this.<%= repositoryNameCamel %>.count(where);
   }
 
-  @get('/<%= modelNamePluralKebab %>')
+  @get('<%= httpPathPlural %>')
   async find(@param.query.string('filter') filter: Filter)
     : Promise<<%= modelName %>[]> {
-      return await this.<%= repositoryNameCamel %>.find(filter);
+    return await this.<%= repositoryNameCamel %>.find(filter);
   }
 
-  @patch('/<%= modelNamePluralKebab %>')
-  async updateAll(@param.query.string('where') where: Where,
-    @requestBody() obj: <%= modelName %>) : Promise<number> {
-      return await this.<%= repositoryNameCamel %>.updateAll(where, obj);
+  @patch('<%= httpPathPlural %>')
+  async updateAll(
+    @param.query.string('where') where: Where,
+    @requestBody() obj: <%= modelName %>
+  ): Promise<number> {
+    return await this.<%= repositoryNameCamel %>.updateAll(where, obj);
   }
 
-  @del('/<%= modelNamePluralKebab %>')
-  async deleteAll(@param.query.string('where') where: Where) : Promise<number> {
+  @del('<%= httpPathPlural %>')
+  async deleteAll(@param.query.string('where') where: Where): Promise<number> {
     return await this.<%= repositoryNameCamel %>.deleteAll(where);
   }
 
-  @get('/<%= modelNamePluralKebab %>/{id}')
-  async findById(@param.path.number('id') id: <%= idType %>) : Promise<<%= modelName %>> {
+  @get('<%= httpPathSingular %>/{id}')
+  async findById(@param.path.number('id') id: <%= idType %>): Promise<<%= modelName %>> {
     return await this.<%= repositoryNameCamel %>.findById(id);
   }
 
-  @patch('/<%= modelNamePluralKebab %>/{id}')
-  async updateById(@param.path.number('id') id: <%= idType %>, @requestBody()
-   obj: <%= modelName %>) : Promise<boolean> {
+  @patch('<%= httpPathSingular %>/{id}')
+  async updateById(
+    @param.path.number('id') id: <%= idType %>,
+    @requestBody() obj: <%= modelName %>
+  ): Promise<boolean> {
     return await this.<%= repositoryNameCamel %>.updateById(id, obj);
   }
 
-  @del('/<%= modelNamePluralKebab %>/{id}')
-  async deleteById(@param.path.number('id') id: <%= idType %>) : Promise<boolean> {
+  @del('<%= httpPathSingular %>/{id}')
+  async deleteById(@param.path.number('id') id: <%= idType %>): Promise<boolean> {
     return await this.<%= repositoryNameCamel %>.deleteById(id);
   }
 }

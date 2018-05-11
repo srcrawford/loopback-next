@@ -114,6 +114,7 @@ exports.kebabCase = _.kebabCase;
 exports.pascalCase = pascalCase;
 exports.camelCase = camelCase;
 exports.pluralize = pluralize;
+exports.urlSlug = urlSlug;
 
 exports.validate = function(name) {
   const isValid = validate(name).validForNewPackages;
@@ -122,17 +123,41 @@ exports.validate = function(name) {
 };
 
 /**
- * Validates whether a given string is a valid url slug or not
+ * Adds a backslash to the start of the word if not already present
+ * @param {string} httpPath
+ */
+exports.appendBackslash = httpPath => httpPath.replace(/^\/?/, '/');
+
+/**
+ * Validates whether a given string is a valid url slug or not.
+ * Allows slugs with backslash in front of them to be validated as well
  * @param {string} name Slug to validate
  */
 exports.validateUrlSlug = function(name) {
+  const backslashIfNeeded = name.charAt(0) === '/' ? '/' : '';
+  if (backslashIfNeeded === '/') {
+    name = name.substr(1);
+  }
   const separators = ['-', '.', '_', '~', ''];
   const possibleSlugs = separators.map(separator =>
     urlSlug(name, separator, false),
   );
   if (!possibleSlugs.includes(name))
-    return `Invalid url slug. Suggested slug: ${possibleSlugs[0]}`;
+    return `Invalid url slug. Suggested slug: ${backslashIfNeeded}${
+      possibleSlugs[0]
+    }`;
   return true;
+};
+
+exports.getUrlPathChoices = function(answers) {
+  const singular = urlSlug(answers.modelName);
+  const plural = pluralize(singular);
+  const defaultOpt = {
+    name: `default (/${singular} and /${plural})`,
+    value: 'default',
+    short: `/${singular}, /${plural}`,
+  };
+  return [defaultOpt, 'custom'];
 };
 
 /**

@@ -25,11 +25,11 @@ const templateName = testUtils.givenAControllerPath(
   'controller-template.ts',
 );
 const withInputProps = {
-  name: 'fooBar',
+  name: 'productReview',
 };
 const withInputName = testUtils.givenAControllerPath(
   null,
-  'foo-bar.controller.ts',
+  'product-review.controller.ts',
 );
 
 describe('controller-generator extending BaseGenerator', baseTests);
@@ -47,6 +47,7 @@ describe('lb4 controller', () => {
         assert.noFile(withInputName);
       });
   });
+
   it('does not run without the loopback keyword', () => {
     return testUtils
       .runGeneratorWith(
@@ -70,10 +71,12 @@ describe('lb4 controller', () => {
           })
           .toPromise();
       });
+
       it('writes correct file name', () => {
         assert.file(tmpDir + withInputName);
         assert.noFile(tmpDir + templateName);
       });
+
       it('scaffolds correct files', () => {
         checkBasicContents(tmpDir);
       });
@@ -86,12 +89,14 @@ describe('lb4 controller', () => {
             tmpDir = dir;
             testUtils.givenAnApplicationDir(dir);
           })
-          .withArguments('fooBar');
+          .withArguments('productReview');
       });
+
       it('writes correct file name', () => {
         assert.file(tmpDir + withInputName);
         assert.noFile(tmpDir + templateName);
       });
+
       it('scaffolds correct files', () => {
         checkBasicContents(tmpDir);
       });
@@ -100,9 +105,10 @@ describe('lb4 controller', () => {
 
   describe('REST CRUD', () => {
     const baseInput = {
-      name: 'fooBar',
+      name: 'productReview',
       controllerType: ControllerGenerator.REST,
     };
+
     it('creates REST CRUD template with valid input', () => {
       let tmpDir;
       return testUtils
@@ -110,7 +116,7 @@ describe('lb4 controller', () => {
           generator,
           Object.assign(
             {
-              modelName: 'Foo',
+              modelName: 'ProductReview',
               repositoryName: 'BarRepository',
               id: 'number',
             },
@@ -125,15 +131,16 @@ describe('lb4 controller', () => {
           return checkRestCrudContents(tmpDir);
         });
     });
-    describe('modelNamePlural', () => {
-      it('is inferred to be plural form of model name', () => {
+
+    describe('HTTP REST path', () => {
+      it('defaults correctly', () => {
         let tmpDir;
         return testUtils
           .runGeneratorWith(
             generator,
             Object.assign(
               {
-                modelName: 'Foo',
+                modelName: 'ProductReview',
                 repositoryName: 'BarRepository',
                 id: 'number',
               },
@@ -145,21 +152,21 @@ describe('lb4 controller', () => {
             },
           )
           .then(() => {
-            checkRestPaths(tmpDir, 'foos');
+            checkRestPaths(tmpDir, '/product-review', '/product-reviews');
           });
       });
-      it('uses given modelNamePlural for building paths', () => {
+
+      it('defaults correctly from "custom"', () => {
         let tmpDir;
-        const urlSlug = 'custom';
         return testUtils
           .runGeneratorWith(
             generator,
             Object.assign(
               {
-                modelName: 'Foo',
-                modelNamePlural: urlSlug,
+                modelName: 'ProductReview',
                 repositoryName: 'BarRepository',
                 id: 'number',
+                httpPathNameChoices: 'custom',
               },
               baseInput,
             ),
@@ -169,7 +176,58 @@ describe('lb4 controller', () => {
             },
           )
           .then(() => {
-            checkRestPaths(tmpDir, urlSlug);
+            checkRestPaths(tmpDir, '/product-review', '/product-reviews');
+          });
+      });
+
+      it('defaults correctly from "custom" and given input as "singular"', () => {
+        let tmpDir;
+        return testUtils
+          .runGeneratorWith(
+            generator,
+            Object.assign(
+              {
+                modelName: 'ProductReview',
+                repositoryName: 'BarRepository',
+                id: 'number',
+                httpPathNameChoices: 'custom',
+                httpPathSingular: '/foo-bar',
+              },
+              baseInput,
+            ),
+            dir => {
+              tmpDir = dir;
+              givenModelAndRepository(tmpDir);
+            },
+          )
+          .then(() => {
+            checkRestPaths(tmpDir, '/foo-bar', '/foo-bars');
+          });
+      });
+
+      it('honors custom http PATHs', () => {
+        let tmpDir;
+        return testUtils
+          .runGeneratorWith(
+            generator,
+            Object.assign(
+              {
+                modelName: 'ProductReview',
+                repositoryName: 'BarRepository',
+                id: 'number',
+                httpPathNameChoices: 'custom',
+                httpPathSingular: '/foo-bar',
+                httpPathPlural: '/bar-baz',
+              },
+              baseInput,
+            ),
+            dir => {
+              tmpDir = dir;
+              givenModelAndRepository(tmpDir);
+            },
+          )
+          .then(() => {
+            checkRestPaths(tmpDir, '/foo-bar', '/bar-baz');
           });
       });
     });
@@ -210,7 +268,7 @@ describe('lb4 controller', () => {
   function givenModelAndRepository(tmpDir) {
     testUtils.givenAnApplicationDir(tmpDir);
     fs.writeFileSync(
-      testUtils.givenAModelPath(tmpDir, 'foo.model.ts'),
+      testUtils.givenAModelPath(tmpDir, 'product-review.model.ts'),
       '--DUMMY VALUE--',
     );
     fs.writeFileSync(
@@ -253,7 +311,7 @@ describe('lb4 controller', () => {
       generator,
       Object.assign(
         {
-          modelName: 'Foo',
+          modelName: 'ProductReview',
           id: 'number',
         },
         baseInput,
@@ -261,7 +319,7 @@ describe('lb4 controller', () => {
       dir => {
         testUtils.givenAnApplicationDir(dir);
         fs.writeFileSync(
-          testUtils.givenAModelPath(dir, 'foo.model.ts'),
+          testUtils.givenAModelPath(dir, 'product-review.model.ts'),
           '--DUMMY VALUE--',
         );
       },
@@ -278,7 +336,7 @@ describe('lb4 controller', () => {
       generator,
       Object.assign(
         {
-          modelName: 'Foo',
+          modelName: 'ProductReview',
           repositoryName: 'BarRepository',
           id: 'number',
         },
@@ -304,7 +362,7 @@ describe('lb4 controller', () => {
       generator,
       Object.assign(
         {
-          modelName: 'Foo',
+          modelName: 'ProductReview',
           repositoryName: 'BarRepository',
           id: 'number',
         },
@@ -313,7 +371,7 @@ describe('lb4 controller', () => {
       dir => {
         testUtils.givenAnApplicationDir(dir, {omitRepositoryDir: true});
         fs.writeFileSync(
-          testUtils.givenAModelPath(dir, 'foo.model.ts'),
+          testUtils.givenAModelPath(dir, 'product-review.model.ts'),
           '--DUMMY VALUE--',
         );
       },
@@ -321,7 +379,7 @@ describe('lb4 controller', () => {
   }
 
   function checkBasicContents(tmpDir) {
-    assert.fileContent(tmpDir + withInputName, /class FooBarController/);
+    assert.fileContent(tmpDir + withInputName, /class ProductReviewController/);
     assert.fileContent(tmpDir + withInputName, /constructor\(\) {}/);
   }
 
@@ -335,7 +393,7 @@ describe('lb4 controller', () => {
    * @param {String} tmpDir
    */
   function checkRestCrudContents(tmpDir) {
-    assert.fileContent(tmpDir + withInputName, /class FooBarController/);
+    assert.fileContent(tmpDir + withInputName, /class ProductReviewController/);
 
     // Repository and injection
     assert.fileContent(tmpDir + withInputName, /\@repository\(BarRepository\)/);
@@ -347,73 +405,72 @@ describe('lb4 controller', () => {
     // Assert that the decorators are present in the correct groupings!
     assert.fileContent(
       tmpDir + withInputName,
-      /\@post\('\/foos'\)\s{1,}async create\(\@requestBody\(\)/,
+      /\@post\('\/product-review'\)\s{1,}async create\(\@requestBody\(\)/,
     );
 
     assert.fileContent(
       tmpDir + withInputName,
-      /\@get\('\/foos\/count'\)\s{1,}async count\(\@param.query.string\('where'\)/,
+      /\@get\('\/product-reviews\/count'\)\s{1,}async count\(\@param.query.string\('where'\)/,
     );
 
     assert.fileContent(
       tmpDir + withInputName,
-      /\@get\('\/foos'\)\s{1,}async find\(\@param.query.string\('filter'\)/,
+      /\@get\('\/product-reviews'\)\s{1,}async find\(\@param.query.string\('filter'\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@patch\('\/foos'\)\s{1,}async updateAll\(\@param.query.string\('where'\) where: Where,\s{1,}\@requestBody\(\)/,
+      /\@patch\('\/product-reviews'\)\s{1,}async updateAll\(\@param.query.string\('where'\) where: Where,\s{1,}\@requestBody\(\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@del\('\/foos'\)\s{1,}async deleteAll\(\@param.query.string\('where'\)/,
+      /\@del\('\/product-reviews'\)\s{1,}async deleteAll\(\@param.query.string\('where'\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@get\('\/foos\/{id}'\)\s{1,}async findById\(\@param.path.number\('id'\)/,
+      /\@get\('\/product-review\/{id}'\)\s{1,}async findById\(\@param.path.number\('id'\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@patch\('\/foos\/{id}'\)\s{1,}async updateById\(\@param.path.number\('id'\) id: number, \@requestBody\(\)/,
+      /\@patch\('\/product-review\/{id}'\)\s{1,}async updateById\(\@param.path.number\('id'\) id: number, \@requestBody\(\)/,
     );
     assert.fileContent(
       tmpDir + withInputName,
-      /\@del\('\/foos\/{id}'\)\s{1,}async deleteById\(\@param.path.number\('id'\) id: number\)/,
+      /\@del\('\/product-review\/{id}'\)\s{1,}async deleteById\(\@param.path.number\('id'\) id: number\)/,
     );
   }
 
-  function checkRestPaths(tmpDir, restUrl) {
-    restUrl = utils.kebabCase(restUrl);
+  function checkRestPaths(tmpDir, restUrl, restUrlPlural) {
     assert.fileContent(
       tmpDir + withInputName,
-      new RegExp(/@post\('\//.source + restUrl + /'\)/.source),
+      new RegExp(/@post\('/.source + restUrl + /'\)/.source),
     );
     assert.fileContent(
       tmpDir + withInputName,
-      new RegExp(/@get\('\//.source + restUrl + /\/count'\)/.source),
+      new RegExp(/@get\('/.source + restUrlPlural + /\/count'\)/.source),
     );
     assert.fileContent(
       tmpDir + withInputName,
-      new RegExp(/@get\('\//.source + restUrl + /'\)/.source),
+      new RegExp(/@get\('/.source + restUrlPlural + /'\)/.source),
     );
     assert.fileContent(
       tmpDir + withInputName,
-      new RegExp(/@patch\('\//.source + restUrl + /'\)/.source),
+      new RegExp(/@patch\('/.source + restUrlPlural + /'\)/.source),
     );
     assert.fileContent(
       tmpDir + withInputName,
-      new RegExp(/@del\('\//.source + restUrl + /'\)/.source),
+      new RegExp(/@del\('/.source + restUrlPlural + /'\)/.source),
     );
     assert.fileContent(
       tmpDir + withInputName,
-      new RegExp(/@get\('\//.source + restUrl + /\/{id}'\)/.source),
+      new RegExp(/@get\('/.source + restUrl + /\/{id}'\)/.source),
     );
     assert.fileContent(
       tmpDir + withInputName,
-      new RegExp(/@patch\('\//.source + restUrl + /\/{id}'\)/.source),
+      new RegExp(/@patch\('/.source + restUrl + /\/{id}'\)/.source),
     );
     assert.fileContent(
       tmpDir + withInputName,
-      new RegExp(/@del\('\//.source + restUrl + /\/{id}'\)/.source),
+      new RegExp(/@del\('/.source + restUrl + /\/{id}'\)/.source),
     );
   }
 });
